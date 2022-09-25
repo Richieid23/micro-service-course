@@ -15,7 +15,11 @@ class MentorController extends Controller
      */
     public function index()
     {
-        //
+        $mentors = Mentor::all();
+        return \response()->json([
+            'status' => 'success',
+            'data' => $mentors
+        ]);
     }
 
     /**
@@ -70,7 +74,18 @@ class MentorController extends Controller
      */
     public function show($id)
     {
-        //
+        $mentor = Mentor::find($id);
+        if (!$mentor) {
+            return \response()->json([
+                'status' => 'error',
+                'message' => 'mentor not found'
+            ], 404);
+        }
+
+        return \response()->json([
+            'status' => 'success',
+            'data' => $mentor
+        ]);
     }
 
     /**
@@ -136,6 +151,18 @@ class MentorController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $mentor = Mentor::find($id);
+        if (!$mentor) {
+            return \response()->json([
+                'status' => 'error',
+                'message' => 'mentor not found'
+            ], 404);
+        }
+
+        $mentor->delete();
+        return \response()->json([
+            'status' => 'error',
+            'message' => 'mentor deleted successfully'
+        ]);
     }
 }

@@ -14,9 +14,19 @@ class LessonController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $lessons = Lesson::query();
+
+        $chapterId = $request->query('chapter_id');
+        $lessons->when($chapterId, function ($query) use ($chapterId) {
+            return $query->where('chapter_id', $chapterId);
+        });
+
+        return \response()->json([
+            'status' => 'success',
+            'data' => $lessons->get()
+        ]);
     }
 
     /**
@@ -79,7 +89,18 @@ class LessonController extends Controller
      */
     public function show($id)
     {
-        //
+        $lesson = Lesson::find($id);
+        if (!$lesson) {
+            return \response()->json([
+                'status' => 'error',
+                'message' => 'lesson not found'
+            ], 404);
+        }
+
+        return \response()->json([
+            'status' => 'success',
+            'data' => $lesson
+        ]);
     }
 
     /**
@@ -155,6 +176,19 @@ class LessonController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $lesson = Lesson::find($id);
+        if (!$lesson) {
+            return \response()->json([
+                'status' => 'error',
+                'message' => 'lesson not found'
+            ], 404);
+        }
+
+        $lesson->delete();
+
+        return \response()->json([
+            'status' => 'success',
+            'message' => 'lesson deleted successfully'
+        ]);
     }
 }

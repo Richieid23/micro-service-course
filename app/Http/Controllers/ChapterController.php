@@ -14,9 +14,20 @@ class ChapterController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $chapters = Chapter::query();
+
+        $courseId = $request->query('course_id');
+
+        $chapters->when($courseId, function ($query) use ($courseId) {
+            return $query->where('course_id', $courseId);
+        });
+
+        return \response()->json([
+            'status' => 'success',
+            'data' => $chapters->get()
+        ]);
     }
 
     /**
@@ -101,7 +112,46 @@ class ChapterController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $rules = [
+            'name' => 'string',
+            'course_id' => 'integer'
+        ];
+
+        $data = $request->all();
+
+        $validator = Validator::make($data, $rules);
+
+        if ($validator->fails()) {
+            return \response()->json([
+                'status' => 'error',
+                'message' => $validator->errors()
+            ], 400);
+        }
+
+        $chapter = Chapter::find($id);
+        if (!$chapter) {
+            return \response()->json([
+                'status' => 'error',
+                'message' => 'chapter not found'
+            ], 404);
+        }
+
+        $courseId = $request->input('course_id');
+        $course = Course::find($courseId);
+        if (!$course) {
+            return \response()->json([
+                'status' => 'error',
+                'message' => 'course not found'
+            ], 404);
+        }
+
+        $chapter->fill($data);
+        $chapter->save();
+
+        return \response()->json([
+            'status' => 'success',
+            'data' => $chapter
+        ]);
     }
 
     /**

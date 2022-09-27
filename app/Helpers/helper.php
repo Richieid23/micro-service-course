@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Http;
 
 function getUser($userId)
 {
-    $url = env('SERVICE_USER_URL').'user/'.$userId;
+    $url = env('SERVICE_USER_URL') . 'users/' . $userId;
 
     try {
         $response = Http::timeout(10)->get($url);
@@ -22,10 +22,10 @@ function getUser($userId)
 
 function getUserByIds($userIds = [])
 {
-    $url = env('SERVICE_USER_URL') . 'user/';
+    $url = env('SERVICE_USER_URL') . 'users/';
 
     try {
-        if(count($userIds) === 0){
+        if (count($userIds) === 0) {
             return [
                 'status' => 'success',
                 'http_code' => 200,

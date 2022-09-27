@@ -148,12 +148,14 @@ class ChapterController extends Controller
         }
 
         $courseId = $request->input('course_id');
-        $course = Course::find($courseId);
-        if (!$course) {
-            return \response()->json([
-                'status' => 'error',
-                'message' => 'course not found'
-            ], 404);
+        if ($courseId) {
+            $course = Course::find($courseId);
+            if (!$course) {
+                return \response()->json([
+                    'status' => 'error',
+                    'message' => 'course not found'
+                ], 404);
+            }
         }
 
         $chapter->fill($data);
